@@ -34,22 +34,6 @@ bool Game::init(SDL_Window* window, SDL_Surface* screenSurface)
     return success;
 }
 
-bool Game::LoadMedia(SDL_Surface* gHelloWorld)
-{
-    //Loading success flag
-    bool success = true;
-
-    //Load splash image
-    gHelloWorld = SDL_LoadBMP("vendor/image/hello_world.bmp");
-    if(gHelloWorld == NULL)
-    {
-        printf("Unable to load image %s! SDL Error: %s\n", "vendor/image/hello_world.bmp", SDL_GetError());
-        success = false;
-    }
-
-    return success;
-}
-
 void Game::Event()
 {
 }
@@ -75,3 +59,4 @@ void Game::Quit(SDL_Window* window, SDL_Surface* gHelloWorld)
     //Quit SDL subsystems
     SDL_Quit();
 }
+
