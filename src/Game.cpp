@@ -26,8 +26,19 @@ bool Game::init(SDL_Window* window, SDL_Surface* screenSurface)
         }
         else
         {
+            //Initialize PNG loading
+            int imgFlags = IMG_INIT_PNG;
+            if(!(IMG_Init(imgFlags) & imgFlags))
+            {
+                SDL_Log("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+                success = false;
+            }
+            else{
+
             //Get window surface
             screenSurface = SDL_GetWindowSurface( window );
+
+            }
         }
     }
 
@@ -57,6 +68,7 @@ void Game::Quit(SDL_Window* window, SDL_Surface* gHelloWorld)
     window = NULL;
 
     //Quit SDL subsystems
+    IMG_Quit();
     SDL_Quit();
 }
 
