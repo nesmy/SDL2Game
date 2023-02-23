@@ -11,16 +11,19 @@ class Game
     Game();
     ~Game();
 
-    bool init(SDL_Window* window, SDL_Surface* screenSurface);
+    bool init();
     
-    void Event();
+    void Event(SDL_Event e, bool quit);
     void Update();
     void Render();
-    void Quit(SDL_Window* window, SDL_Surface* gHelloWorld);
-    
+    void Quit();
+    SDL_Texture* loadTexture( std::string path );
+    bool loadMedia();
 
     private:
-    
+    SDL_Window* window;
+    SDL_Renderer* gRenderer;
+    SDL_Texture* gTexture;
     
     bool success;
     const int SCREEN_WIDTH = 640;
