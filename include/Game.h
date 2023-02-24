@@ -13,12 +13,13 @@ class Game
 
     bool init();
     
-    void Event(SDL_Event e, bool quit);
+    void Event(SDL_Event e);
     void Update();
     void Render();
     void Quit();
     SDL_Texture* loadTexture( std::string path );
     bool loadMedia();
+    bool Close = false;
 
     private:
     SDL_Window* window;

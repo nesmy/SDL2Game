@@ -9,13 +9,13 @@ int main(int argc, char** argv)
     SDL_Event e;
     SDL_Log("Init");
     game->init();
-    while(!quit)
+    while(!game->Close)
     {
-        SDL_Log("Event");
-        game->Event(e, quit);
-        SDL_Log("Update");
+        //SDL_Log("Event");
+        game->Event(e);
+        //SDL_Log("Update");
         game->Update();
-        SDL_Log("Render");
+        //SDL_Log("Render");
         game->Render();
     }
     SDL_Log("Quit");
