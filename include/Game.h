@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <string>
+#include "LTexture.h"
 
 class Game
 {
@@ -17,14 +18,15 @@ class Game
     void Update();
     void Render();
     void Quit();
-    SDL_Texture* loadTexture( std::string path );
     bool loadMedia();
     bool Close = false;
 
     private:
     SDL_Window* window;
     SDL_Renderer* gRenderer;
-    SDL_Texture* gTexture;
+    LTexture gFooTexture;
+    LTexture gBackgroundtextures;
+    
     
     bool success;
     const int SCREEN_WIDTH = 640;

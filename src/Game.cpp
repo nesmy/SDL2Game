@@ -85,52 +85,25 @@ void Game::Update()
 
 void Game::Render()
 {
-    //Clear screen
-	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(gRenderer);
+   //Clear screen
+   SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+   SDL_RenderClear(gRenderer);
 
-	//Top left corner viewport
-	SDL_Rect topLeftViewport;
-	topLeftViewport.x = 0;
-	topLeftViewport.y = 0;
-	topLeftViewport.w = SCREEN_WIDTH / 2;
-	topLeftViewport.h = SCREEN_HEIGHT / 2;
-	SDL_RenderSetViewport( gRenderer, &topLeftViewport);
+   //Render background texture to screen
+   gBackgroundtextures.render(0,0, gRenderer);
 
-	//Render texture to screen
-	SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+   //Render Foo' to the screen
+   gFooTexture.render(640 / 2,480 / 2, gRenderer);
 
-	//Top right viewport
-	SDL_Rect topRightViewport;
-	topRightViewport.x = SCREEN_WIDTH / 2;
-	topRightViewport.y = 0;
-	topRightViewport.w = SCREEN_WIDTH / 2;
-	topRightViewport.h = SCREEN_HEIGHT / 2;
-	SDL_RenderSetViewport(gRenderer, &topRightViewport);
-
-	//Render texture to screen
-	SDL_RenderCopy( gRenderer, gTexture, NULL, NULL);
-
-	//Bottom viewport
-	SDL_Rect bottomViewport;
-	bottomViewport.x = 0;
-	bottomViewport.y = SCREEN_HEIGHT / 2;
-	bottomViewport.w = SCREEN_WIDTH;
-	bottomViewport.h = SCREEN_HEIGHT / 2;
-	SDL_RenderSetViewport(gRenderer, &bottomViewport);
-
-	//Render texture to screen
-	SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
-
-	//Update screen
-	SDL_RenderPresent(gRenderer);
+   //Update screen
+   SDL_RenderPresent(gRenderer);
 }
 
 void Game::Quit()
 {
    //Free loaded image
-   SDL_DestroyTexture( gTexture);
-   gTexture = NULL;
+   gFooTexture.free();
+   gBackgroundtextures.free();
 
    //Destroy window
    SDL_DestroyRenderer(gRenderer);
@@ -143,44 +116,24 @@ void Game::Quit()
    SDL_Quit();
 }
 
-SDL_Texture* Game::loadTexture( std::string path )
-{
-	//The final texture
-	SDL_Texture* newTexture = NULL;
-
-	//Load image at specified path
-	SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
-	if( loadedSurface == NULL )
-	{
-		SDL_Log( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
-	}
-	else
-	{
-		//Create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
-		if( newTexture == NULL )
-		{
-			SDL_Log( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
-		}
-
-		//Get rid of old loaded surface
-		SDL_FreeSurface( loadedSurface );
-	}
-
-	return newTexture;
-}
-
 bool Game::loadMedia()
 {
 	//Loading success flag
 	bool success = true;
 
-	//Load stretching surface
-	gTexture = loadTexture( "D:/Maker/SDL2Game/vendor/image/texture.png"  );
-	if( gTexture == NULL )
+	//Load Foo textute
+	if(!gFooTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/foo.png", gRenderer))
 	{
-		SDL_Log( "Failed to load texture image!\n" );
+		SDL_Log("Failed to load Foo' texture image!\n");
 		success = false;
 	}
+
+	//Load Background texture
+	if(!gBackgroundtextures.loadFromFile("D:/Maker/SDL2Game/vendor/image/background.png", gRenderer))
+	{
+		SDL_Log("Failed to load background texture image!\n");
+		success = false;
+	}
+
 	return success;
 }
