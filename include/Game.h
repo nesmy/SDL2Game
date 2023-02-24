@@ -24,8 +24,8 @@ class Game
     private:
     SDL_Window* window;
     SDL_Renderer* gRenderer;
-    LTexture gFooTexture;
-    LTexture gBackgroundtextures;
+    SDL_Rect gSpriteClips[4];
+    LTexture gSpriteSheetTexture;
     
     
     bool success;
