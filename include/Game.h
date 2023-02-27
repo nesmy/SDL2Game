@@ -2,8 +2,10 @@
 
 #include <SDL2\SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <string>
+#include <cmath>
 #include "LTexture.h"
 
 class Game
@@ -24,10 +26,8 @@ class Game
     private:
     SDL_Window* window;
     SDL_Renderer* gRenderer;
-    LTexture gArrawTexture;
-
-    double degrees = 0;
-    SDL_RendererFlip flipType = SDL_FLIP_NONE;
+    TTF_Font* gFont = NULL;
+    LTexture gTextTexture;;
     
     
     bool success;

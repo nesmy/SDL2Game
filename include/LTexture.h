@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <string>
 
@@ -15,6 +16,9 @@ public:
 
     //Loads image at specified path
     bool loadFromFile( std::string path, SDL_Renderer* gRenderer);
+
+    //Create image from font string
+    bool loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Renderer* gRenderer, TTF_Font* gFont);
 
     //Deallocates texture
     void free();

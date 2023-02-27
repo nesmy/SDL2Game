@@ -52,6 +52,13 @@ bool Game::init()
 					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 					success = false;
 				}
+
+				//Initialise SDL_ttf
+				if(TTF_Init() == -1)
+				{
+					SDL_Log("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+					success = false;
+				}
 			}
 		}
 	}
@@ -74,25 +81,7 @@ void Game::Event(SDL_Event e)
 		else if(e.type == SDL_KEYDOWN){
 			 switch( e.key.keysym.sym )
                         {
-                            case SDLK_a:
-                            degrees -= 60;
-                            break;
-                            
-                            case SDLK_d:
-                            degrees += 60;
-                            break;
-
-                            case SDLK_q:
-                            flipType = SDL_FLIP_HORIZONTAL;
-                            break;
-
-                            case SDLK_w:
-                            flipType = SDL_FLIP_NONE;
-                            break;
-
-                            case SDLK_e:
-                            flipType = SDL_FLIP_VERTICAL;
-                            break;
+                        
                         }
 			
 		}
@@ -116,7 +105,7 @@ void Game::Render()
    SDL_RenderClear(gRenderer);
 
 	//Render current farme
-	gArrawTexture.render((SCREEN_WIDTH - gArrawTexture.getWidth()) / 2, (SCREEN_HEIGHT - gArrawTexture.getHeight()) / 2,gRenderer , NULL, degrees, NULL, flipType);
+	gTextTexture.render((SCREEN_WIDTH - gTextTexture.getWidth()) / 2, (SCREEN_HEIGHT - gTextTexture.getHeight()) / 2,gRenderer );
    //Update screen
    SDL_RenderPresent(gRenderer);
 }
@@ -124,7 +113,10 @@ void Game::Render()
 void Game::Quit()
 {
    //Free loaded image
-   gArrawTexture.free();
+   gTextTexture.free();
+
+   TTF_CloseFont(gFont);
+   gFont = NULL;
 
    //Destroy window
    SDL_DestroyRenderer(gRenderer);
@@ -143,13 +135,21 @@ bool Game::loadMedia()
 	bool success = true;
 
 	//Load sprite sheet texture
-	if(!gArrawTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/foo.png", gRenderer))
+	gFont = TTF_OpenFont("D:/Maker/SDL2Game/vendor/image/lazy.ttf", 28);
+	if(gFont == NULL)
 	{
-		SDL_Log("Failed to load sprite sheet texture!\n");
+		SDL_Log("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
 		success = false;
 	}
-	
-    
+	else{
+		//Render text
+		SDL_Color textColor = { 0,0,0};
+		if(!gTextTexture.loadFromRenderedText("the quick brown fox jumps over the lazy dog", textColor, gRenderer, gFont))
+		{
+			SDL_Log("Failed to render text texture!\n");
+			success = false;
+		}
+	}
 	
 	return success;
 }
