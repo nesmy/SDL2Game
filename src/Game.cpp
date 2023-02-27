@@ -72,37 +72,33 @@ void Game::Event(SDL_Event e)
 		}
 		//On keypress change rgb values
 		else if(e.type == SDL_KEYDOWN){
-			switch (e.key.keysym.sym)
+			
+			//Increase alpha on w
+			if(e.key.keysym.sym == SDLK_w)
 			{
-				//Increse red
-				case SDLK_q:
-				r += 32;
-				break;
-
-				//Increase green
-				case SDLK_w:
-				g += 32;
-				break;
-
-				//Increase blue
-				case SDLK_e:
-				b += 32;
-				break;
-
-				//Decrease red
-				case SDLK_a:
-				r -= 32;
-				break;
-
-				//Decrease green
-				case SDLK_s:
-				g -= 32;
-				break;
-
-				//Decrease blue
-				case SDLK_d:
-				b -= 32;
-				break;
+				//cap if over 255
+				if( a + 32 > 255)
+				{
+					a = 255;
+				}
+				//Increment otherwise
+				else{
+					a += 32;
+				}
+			}
+			//Decrease alpha on s
+			else if(e.key.keysym.sym == SDLK_s)
+			{
+				//cap if below 0
+				if( a - 32 < 0)
+				{
+					a = 0;
+				}
+				//Decrement otherwise
+				else
+				{
+					a -= 32;
+				}
 			}
 		}
        
@@ -124,9 +120,12 @@ void Game::Render()
    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
    SDL_RenderClear(gRenderer);
 
-	//Render top left sprite
-	gSpriteSheetTexture.setColor(r,g,b);
-	gSpriteSheetTexture.render(0,0, gRenderer);
+	//Render background
+	gBackgroundTexture.render(0,0,gRenderer );
+
+	//Render front blended
+	gModulatedTexture.setAlpha( a);
+	gModulatedTexture.render(0,0, gRenderer);
 
    //Update screen
    SDL_RenderPresent(gRenderer);
@@ -135,7 +134,8 @@ void Game::Render()
 void Game::Quit()
 {
    //Free loaded image
-   gSpriteSheetTexture.free();
+   gModulatedTexture.free();
+   gBackgroundTexture.free();
 
    //Destroy window
    SDL_DestroyRenderer(gRenderer);
@@ -154,37 +154,19 @@ bool Game::loadMedia()
 	bool success = true;
 
 	//Load sprite sheet texture
-	if(!gSpriteSheetTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/texture.png", gRenderer))
+	if(!gModulatedTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/texture.png", gRenderer))
 	{
 		SDL_Log("Failed to load sprite sheet texture!\n");
 		success = false;
 	}
 	else
 	{
-		//Set top left sprite
-        gSpriteClips[ 0 ].x =   0;
-        gSpriteClips[ 0 ].y =   0;
-        gSpriteClips[ 0 ].w = 100;
-        gSpriteClips[ 0 ].h = 100;
-
-        //Set top right sprite
-        gSpriteClips[ 1 ].x = 100;
-        gSpriteClips[ 1 ].y =   0;
-        gSpriteClips[ 1 ].w = 100;
-        gSpriteClips[ 1 ].h = 100;
-        
-        //Set bottom left sprite
-        gSpriteClips[ 2 ].x =   0;
-        gSpriteClips[ 2 ].y = 100;
-        gSpriteClips[ 2 ].w = 100;
-        gSpriteClips[ 2 ].h = 100;
-
-        //Set bottom right sprite
-        gSpriteClips[ 3 ].x = 100;
-        gSpriteClips[ 3 ].y = 100;
-        gSpriteClips[ 3 ].w = 100;
-        gSpriteClips[ 3 ].h = 100;
+		//set standard alpha blending
+		gModulatedTexture.setBlendMode(SDL_BLENDMODE_BLEND);
 	}
+
+	//Load background texture
+	if( !gBackgroundTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/background.png", gRenderer))
 	
 	return success;
 }
