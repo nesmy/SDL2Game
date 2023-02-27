@@ -34,7 +34,7 @@ bool Game::init()
 		else
 		{
 			//Create renderer for window
-			gRenderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
+			gRenderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -73,33 +73,7 @@ void Game::Event(SDL_Event e)
 		//On keypress change rgb values
 		else if(e.type == SDL_KEYDOWN){
 			
-			//Increase alpha on w
-			if(e.key.keysym.sym == SDLK_w)
-			{
-				//cap if over 255
-				if( a + 32 > 255)
-				{
-					a = 255;
-				}
-				//Increment otherwise
-				else{
-					a += 32;
-				}
-			}
-			//Decrease alpha on s
-			else if(e.key.keysym.sym == SDLK_s)
-			{
-				//cap if below 0
-				if( a - 32 < 0)
-				{
-					a = 0;
-				}
-				//Decrement otherwise
-				else
-				{
-					a -= 32;
-				}
-			}
+			
 		}
        
 	}
@@ -120,22 +94,27 @@ void Game::Render()
    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
    SDL_RenderClear(gRenderer);
 
-	//Render background
-	gBackgroundTexture.render(0,0,gRenderer );
-
-	//Render front blended
-	gModulatedTexture.setAlpha( a);
-	gModulatedTexture.render(0,0, gRenderer);
+	//Render current farme
+	SDL_Rect* currentClip = &gSpriteClips[frame / 4];
+	gSpriteSheetTexture.render((SCREEN_WIDTH - currentClip->w) / 2, (SCREEN_HEIGHT - currentClip->h) / 2, gRenderer ,currentClip);
 
    //Update screen
    SDL_RenderPresent(gRenderer);
+
+   //Go to next frame
+   ++frame;
+
+   //Cycle animation
+   if( frame / 4 >= WALKING_ANIMATION_FRAMES)
+   {
+	frame = 0;
+   }
 }
 
 void Game::Quit()
 {
    //Free loaded image
-   gModulatedTexture.free();
-   gBackgroundTexture.free();
+   gSpriteSheetTexture.free();
 
    //Destroy window
    SDL_DestroyRenderer(gRenderer);
@@ -154,19 +133,35 @@ bool Game::loadMedia()
 	bool success = true;
 
 	//Load sprite sheet texture
-	if(!gModulatedTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/texture.png", gRenderer))
+	if(!gSpriteSheetTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/foo.png", gRenderer))
 	{
 		SDL_Log("Failed to load sprite sheet texture!\n");
 		success = false;
 	}
 	else
-	{
-		//set standard alpha blending
-		gModulatedTexture.setBlendMode(SDL_BLENDMODE_BLEND);
-	}
+    {
+        //Set sprite clips
+        gSpriteClips[ 0 ].x =   0;
+        gSpriteClips[ 0 ].y =   0;
+        gSpriteClips[ 0 ].w =  64;
+        gSpriteClips[ 0 ].h = 205;
 
-	//Load background texture
-	if( !gBackgroundTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/background.png", gRenderer))
+        gSpriteClips[ 1 ].x =  64;
+        gSpriteClips[ 1 ].y =   0;
+        gSpriteClips[ 1 ].w =  64;
+        gSpriteClips[ 1 ].h = 205;
+        
+        gSpriteClips[ 2 ].x = 128;
+        gSpriteClips[ 2 ].y =   0;
+        gSpriteClips[ 2 ].w =  64;
+        gSpriteClips[ 2 ].h = 205;
+
+        gSpriteClips[ 3 ].x = 192;
+        gSpriteClips[ 3 ].y =   0;
+        gSpriteClips[ 3 ].w =  64;
+        gSpriteClips[ 3 ].h = 205;
+    }
+    
 	
 	return success;
 }

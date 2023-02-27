@@ -24,9 +24,11 @@ class Game
     private:
     SDL_Window* window;
     SDL_Renderer* gRenderer;
-    LTexture gModulatedTexture;
-    LTexture gBackgroundTexture;
-    Uint8 a = 255;
+    //Walking animation
+    static const int WALKING_ANIMATION_FRAMES = 4;
+    SDL_Rect gSpriteClips[ WALKING_ANIMATION_FRAMES ];
+    LTexture gSpriteSheetTexture;
+    int frame = 0;
     
     
     bool success;
@@ -35,13 +37,3 @@ class Game
     //The image we will load and show on the screen
     
 };
-    //Key press surfaces constants
-    enum KeyPressSurfaces
-    {
-    KEY_PRESS_SURFACE_DEFAULT,
-    KEY_PRESS_SURFACE_UP,
-    KEY_PRESS_SURFACE_DOWN,
-    KEY_PRESS_SURFACE_LEFT,
-    KEY_PRESS_SURFACE_RIGHT,
-    KEY_PRESS_SURFACE_TOTAL
-    };
