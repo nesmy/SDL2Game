@@ -24,11 +24,10 @@ class Game
     private:
     SDL_Window* window;
     SDL_Renderer* gRenderer;
-    //Walking animation
-    static const int WALKING_ANIMATION_FRAMES = 4;
-    SDL_Rect gSpriteClips[ WALKING_ANIMATION_FRAMES ];
-    LTexture gSpriteSheetTexture;
-    int frame = 0;
+    LTexture gArrawTexture;
+
+    double degrees = 0;
+    SDL_RendererFlip flipType = SDL_FLIP_NONE;
     
     
     bool success;

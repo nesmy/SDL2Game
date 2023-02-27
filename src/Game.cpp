@@ -72,7 +72,28 @@ void Game::Event(SDL_Event e)
 		}
 		//On keypress change rgb values
 		else if(e.type == SDL_KEYDOWN){
-			
+			 switch( e.key.keysym.sym )
+                        {
+                            case SDLK_a:
+                            degrees -= 60;
+                            break;
+                            
+                            case SDLK_d:
+                            degrees += 60;
+                            break;
+
+                            case SDLK_q:
+                            flipType = SDL_FLIP_HORIZONTAL;
+                            break;
+
+                            case SDLK_w:
+                            flipType = SDL_FLIP_NONE;
+                            break;
+
+                            case SDLK_e:
+                            flipType = SDL_FLIP_VERTICAL;
+                            break;
+                        }
 			
 		}
        
@@ -95,26 +116,15 @@ void Game::Render()
    SDL_RenderClear(gRenderer);
 
 	//Render current farme
-	SDL_Rect* currentClip = &gSpriteClips[frame / 4];
-	gSpriteSheetTexture.render((SCREEN_WIDTH - currentClip->w) / 2, (SCREEN_HEIGHT - currentClip->h) / 2, gRenderer ,currentClip);
-
+	gArrawTexture.render((SCREEN_WIDTH - gArrawTexture.getWidth()) / 2, (SCREEN_HEIGHT - gArrawTexture.getHeight()) / 2,gRenderer , NULL, degrees, NULL, flipType);
    //Update screen
    SDL_RenderPresent(gRenderer);
-
-   //Go to next frame
-   ++frame;
-
-   //Cycle animation
-   if( frame / 4 >= WALKING_ANIMATION_FRAMES)
-   {
-	frame = 0;
-   }
 }
 
 void Game::Quit()
 {
    //Free loaded image
-   gSpriteSheetTexture.free();
+   gArrawTexture.free();
 
    //Destroy window
    SDL_DestroyRenderer(gRenderer);
@@ -133,34 +143,12 @@ bool Game::loadMedia()
 	bool success = true;
 
 	//Load sprite sheet texture
-	if(!gSpriteSheetTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/foo.png", gRenderer))
+	if(!gArrawTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/foo.png", gRenderer))
 	{
 		SDL_Log("Failed to load sprite sheet texture!\n");
 		success = false;
 	}
-	else
-    {
-        //Set sprite clips
-        gSpriteClips[ 0 ].x =   0;
-        gSpriteClips[ 0 ].y =   0;
-        gSpriteClips[ 0 ].w =  64;
-        gSpriteClips[ 0 ].h = 205;
-
-        gSpriteClips[ 1 ].x =  64;
-        gSpriteClips[ 1 ].y =   0;
-        gSpriteClips[ 1 ].w =  64;
-        gSpriteClips[ 1 ].h = 205;
-        
-        gSpriteClips[ 2 ].x = 128;
-        gSpriteClips[ 2 ].y =   0;
-        gSpriteClips[ 2 ].w =  64;
-        gSpriteClips[ 2 ].h = 205;
-
-        gSpriteClips[ 3 ].x = 192;
-        gSpriteClips[ 3 ].y =   0;
-        gSpriteClips[ 3 ].w =  64;
-        gSpriteClips[ 3 ].h = 205;
-    }
+	
     
 	
 	return success;
