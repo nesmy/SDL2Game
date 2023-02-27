@@ -26,6 +26,9 @@ class Game
     SDL_Renderer* gRenderer;
     SDL_Rect gSpriteClips[4];
     LTexture gSpriteSheetTexture;
+    Uint8 r = 255;
+    Uint8 g = 255;
+    Uint8 b = 255;
     
     
     bool success;

@@ -70,6 +70,41 @@ void Game::Event(SDL_Event e)
 			SDL_Log("Event");
 			Close = true;
 		}
+		//On keypress change rgb values
+		else if(e.type == SDL_KEYDOWN){
+			switch (e.key.keysym.sym)
+			{
+				//Increse red
+				case SDLK_q:
+				r += 32;
+				break;
+
+				//Increase green
+				case SDLK_w:
+				g += 32;
+				break;
+
+				//Increase blue
+				case SDLK_e:
+				b += 32;
+				break;
+
+				//Decrease red
+				case SDLK_a:
+				r -= 32;
+				break;
+
+				//Decrease green
+				case SDLK_s:
+				g -= 32;
+				break;
+
+				//Decrease blue
+				case SDLK_d:
+				b -= 32;
+				break;
+			}
+		}
        
 	}
 }
@@ -90,16 +125,8 @@ void Game::Render()
    SDL_RenderClear(gRenderer);
 
 	//Render top left sprite
-	gSpriteSheetTexture.render(0,0, gRenderer, &gSpriteClips[0]);
-
-	//Render top right sprite
-	gSpriteSheetTexture.render(SCREEN_WIDTH - gSpriteClips[1].w, 0,gRenderer, &gSpriteClips[1]);
-
-	//Render bottom left sprite
-	gSpriteSheetTexture.render(0, SCREEN_HEIGHT - gSpriteClips[2].h,gRenderer, &gSpriteClips[2]);
-
-	//Render bottom right sprite
-	gSpriteSheetTexture.render(SCREEN_WIDTH - gSpriteClips[3].w, SCREEN_HEIGHT - gSpriteClips[3].h, gRenderer, &gSpriteClips[3]);
+	gSpriteSheetTexture.setColor(r,g,b);
+	gSpriteSheetTexture.render(0,0, gRenderer);
 
    //Update screen
    SDL_RenderPresent(gRenderer);
@@ -127,7 +154,7 @@ bool Game::loadMedia()
 	bool success = true;
 
 	//Load sprite sheet texture
-	if(!gSpriteSheetTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/dots.png", gRenderer))
+	if(!gSpriteSheetTexture.loadFromFile("D:/Maker/SDL2Game/vendor/image/texture.png", gRenderer))
 	{
 		SDL_Log("Failed to load sprite sheet texture!\n");
 		success = false;
