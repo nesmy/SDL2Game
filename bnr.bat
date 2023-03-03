@@ -1,3 +1,3 @@
 cd build
 make
-SDL2Game.exe
+OpenGL.exe
