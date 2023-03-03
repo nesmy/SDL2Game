@@ -52,7 +52,7 @@ bool LTexture::loadFromFile(std::string path, SDL_Renderer* gRenderer)
     mTexture = newTexture;
     return mTexture != NULL;
 }
-
+#if defined(SDL_TTF_MAJOR_VERSION)
 bool LTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Renderer *gRenderer, TTF_Font* gFont)
 {
     //Get rid of preexisting texture
@@ -82,6 +82,7 @@ bool LTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor
     }
     return mTexture != NULL;
 }
+#endif
 
 void LTexture::free()
 {

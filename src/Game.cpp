@@ -77,14 +77,12 @@ void Game::Event(SDL_Event e)
 			SDL_Log("Event");
 			Close = true;
 		}
-		//On keypress change rgb values
-		else if(e.type == SDL_KEYDOWN){
-			 switch( e.key.keysym.sym )
-                        {
-                        
-                        }
+		//Handle button events
+        for( int i = 0; i < TOTAL_BUTTONS; ++i )
+        {
+            gButtons[ i ].handleEvent( &e );
 			
-		}
+        }
        
 	}
 }
@@ -104,8 +102,12 @@ void Game::Render()
    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
    SDL_RenderClear(gRenderer);
 
-	//Render current farme
-	gTextTexture.render((SCREEN_WIDTH - gTextTexture.getWidth()) / 2, (SCREEN_HEIGHT - gTextTexture.getHeight()) / 2,gRenderer );
+	//Render buttons
+    for( int i = 0; i < TOTAL_BUTTONS; ++i )
+    {
+        gButtons[ i ].render(gButtonSpriteSheetTexture, gRenderer, &gSpriteClips[ BUTTON_SPRITE_TOTAL ]);
+		SDL_Log("render");
+    }
    //Update screen
    SDL_RenderPresent(gRenderer);
 }
@@ -113,10 +115,7 @@ void Game::Render()
 void Game::Quit()
 {
    //Free loaded image
-   gTextTexture.free();
-
-   TTF_CloseFont(gFont);
-   gFont = NULL;
+   gButtonSpriteSheetTexture.free();
 
    //Destroy window
    SDL_DestroyRenderer(gRenderer);
@@ -134,22 +133,30 @@ bool Game::loadMedia()
 	//Loading success flag
 	bool success = true;
 
-	//Load sprite sheet texture
-	gFont = TTF_OpenFont("D:/Maker/SDL2Game/vendor/image/lazy.ttf", 28);
-	if(gFont == NULL)
+	//Load sprites
+	if( !gButtonSpriteSheetTexture.loadFromFile( "D:/Maker/SDL2Game/vendor/image/button.png", gRenderer ) )
 	{
-		SDL_Log("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+		SDL_Log( "Failed to load button sprite texture!\n" );
 		success = false;
 	}
-	else{
-		//Render text
-		SDL_Color textColor = { 0,0,0};
-		if(!gTextTexture.loadFromRenderedText("the quick brown fox jumps over the lazy dog", textColor, gRenderer, gFont))
+	else
+	{
+		//Set sprites
+		for( int i = 0; i < BUTTON_SPRITE_TOTAL; ++i )
 		{
-			SDL_Log("Failed to render text texture!\n");
-			success = false;
+			gSpriteClips[ i ].x = 0;
+			gSpriteClips[ i ].y = i * 200;
+			gSpriteClips[ i ].w = BUTTON_WIDTH;
+			gSpriteClips[ i ].h = BUTTON_HEIGHT;
 		}
+
+		//Set buttons in corners
+		gButtons[ 0 ].setPosition( 0, 0 );
+		gButtons[ 1 ].setPosition( SCREEN_WIDTH - BUTTON_WIDTH, 0 );
+		gButtons[ 2 ].setPosition( 0, SCREEN_HEIGHT - BUTTON_HEIGHT );
+		gButtons[ 3 ].setPosition( SCREEN_WIDTH - BUTTON_WIDTH, SCREEN_HEIGHT - BUTTON_HEIGHT );
 	}
+
 	
 	return success;
 }

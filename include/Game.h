@@ -7,6 +7,7 @@
 #include <string>
 #include <cmath>
 #include "LTexture.h"
+#include "LButton.h"
 
 class Game
 {
@@ -27,7 +28,10 @@ class Game
     SDL_Window* window;
     SDL_Renderer* gRenderer;
     TTF_Font* gFont = NULL;
-    LTexture gTextTexture;;
+    LButton gButtons[TOTAL_BUTTONS];
+    //Mouse button sprites
+    SDL_Rect gSpriteClips[ BUTTON_SPRITE_TOTAL ];
+    LTexture gButtonSpriteSheetTexture;
     
     
     bool success;
