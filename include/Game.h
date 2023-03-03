@@ -2,9 +2,10 @@
 
 #include <SDL2\SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <string>
+#include <sstream>
 #include <cmath>
 #include "LTexture.h"
 #include "LButton.h"
@@ -27,13 +28,13 @@ class Game
     private:
     SDL_Window* window;
     SDL_Renderer* gRenderer;
-    LTexture gPromptTexture;
-    Mix_Music *gMusic = NULL;
-    //The sound effects that will be used
-    Mix_Chunk *gScratch = NULL;
-    Mix_Chunk *gHigh = NULL;
-    Mix_Chunk *gMedium = NULL;
-    Mix_Chunk *gLow = NULL;
+    LTexture gPromptTextTexture;
+    TTF_Font* gFont;
+    Uint32 startTime = 0;
+    std::stringstream timeText;
+    SDL_Color textColor = { 0,0,0,255};
+    LTexture gTimeTextTexture;
+    
     
     bool success;
     const int SCREEN_WIDTH = 640;

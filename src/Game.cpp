@@ -52,13 +52,13 @@ bool Game::init()
 					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 					success = false;
 				}
-
-				//Initialise SDL_mixer
-				if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2,2048) < 0)
+				//Initialize SDL_ttf
+				if( TTF_Init() == -1 )
 				{
-					SDL_Log("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+					SDL_Log( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
 					success = false;
 				}
+
 			}
 		}
 	}
@@ -77,59 +77,9 @@ void Game::Event(SDL_Event e)
 			SDL_Log("Event");
 			Close = true;
 		}
-		 else if( e.type == SDL_KEYDOWN )
+		else if( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN)
 		{
-			switch( e.key.keysym.sym )
-			{
-				//Play high sound effect
-				case SDLK_1:
-				Mix_PlayChannel( -1, gHigh, 0 );
-				break;
-				
-				//Play medium sound effect
-				case SDLK_2:
-				Mix_PlayChannel( -1, gMedium, 0 );
-				break;
-				
-				//Play low sound effect
-				case SDLK_3:
-				Mix_PlayChannel( -1, gLow, 0 );
-				break;
-				
-				//Play scratch sound effect
-				case SDLK_4:
-				Mix_PlayChannel( -1, gScratch, 0 );
-				break;
-				case SDLK_9:
-				//If there is no music playing
-				if( Mix_PlayingMusic() == 0 )
-				{
-					//Play the music
-					Mix_PlayMusic( gMusic, -1 );
-				}
-				//If music is being played
-				else
-				{
-					//If the music is paused
-					if( Mix_PausedMusic() == 1 )
-					{
-						//Resume the music
-						Mix_ResumeMusic();
-					}
-					//If the music is playing
-					else
-					{
-						//Pause the music
-						Mix_PauseMusic();
-					}
-				}
-				break;
-				
-				case SDLK_0:
-				//Stop the music
-				Mix_HaltMusic();
-				break;
-			}
+			startTime = SDL_GetTicks();
 		}
        
 	}
@@ -146,10 +96,22 @@ void Game::Update()
 
 void Game::Render()
 {
+   //Set text to be rendered
+   timeText.str("");
+   timeText << "Milliseconds since start time" << SDL_GetTicks() - startTime;
+
+   //Render text
+   if( !gTimeTextTexture.loadFromRenderedText( timeText.str().c_str(), textColor, gRenderer, gFont ) )
+	{
+		SDL_Log( "Unable to render time texture!\n" );
+	}
    //Clear screen
    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
    SDL_RenderClear(gRenderer);
 
+	//Render textures
+	gPromptTextTexture.render( ( SCREEN_WIDTH - gPromptTextTexture.getWidth() ) / 2, 0 , gRenderer);
+	gTimeTextTexture.render( ( SCREEN_WIDTH - gPromptTextTexture.getWidth() ) / 2, ( SCREEN_HEIGHT - gPromptTextTexture.getHeight() ) / 2 , gRenderer);
 	
    //Update screen
    SDL_RenderPresent(gRenderer);
@@ -158,21 +120,7 @@ void Game::Render()
 void Game::Quit()
 {
     //Free loaded images
-    gPromptTexture.free();
-
-    //Free the sound effects
-    Mix_FreeChunk( gScratch );
-    Mix_FreeChunk( gHigh );
-    Mix_FreeChunk( gMedium );
-    Mix_FreeChunk( gLow );
-    gScratch = NULL;
-    gHigh = NULL;
-    gMedium = NULL;
-    gLow = NULL;
-    
-    //Free the music
-    Mix_FreeMusic( gMusic );
-    gMusic = NULL;
+    gPromptTextTexture.free();
    
 
    //Destroy window
@@ -191,49 +139,26 @@ bool Game::loadMedia()
 	//Loading success flag
 	bool success = true;
 
-	 //Load prompt texture
-    if( !gPromptTexture.loadFromFile( "D:/Maker/SDL2Game/assets/up.png", gRenderer ) )
-    {
-        printf( "Failed to load prompt texture!\n" );
-        success = false;
-    }
+	//Open the font
+	gFont = TTF_OpenFont("D:/Maker/SDL2Game/assets/lazy.ttf", 28);
+	if(gFont == NULL)
+	{
+		SDL_Log("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+		success = false;
+	}
+	else{
 
-    //Load music
-    gMusic = Mix_LoadMUS( "D:/Maker/SDL2Game/assets/beat.wav" );
-    if( gMusic == NULL )
-    {
-        printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
-        success = false;
-    }
-    
-    //Load sound effects
-    gScratch = Mix_LoadWAV( "D:/Maker/SDL2Game/assets/scratch.wav" );
-    if( gScratch == NULL )
-    {
-        printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
-        success = false;
-    }
-    
-    gHigh = Mix_LoadWAV( "D:/Maker/SDL2Game/assets/high.wav" );
-    if( gHigh == NULL )
-    {
-        printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
-        success = false;
-    }
+		//Set text color as black
+		SDL_Color textColor = { 0,0,0,255};
 
-    gMedium = Mix_LoadWAV( "D:/Maker/SDL2Game/assets/medium.wav" );
-    if( gMedium == NULL )
-    {
-        printf( "Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
-        success = false;
-    }
+		//Load prompt texture
+		if( !gPromptTextTexture.loadFromRenderedText( "Please Enter to reset start time.", textColor, gRenderer, gFont ) )
+		{
+			SDL_Log( "Failed to load prompt texture!\n" );
+			success = false;
+		}
 
-    gLow = Mix_LoadWAV( "D:/Maker/SDL2Game/assets/low.wav" );
-    if( gLow == NULL )
-    {
-        printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
-        success = false;
-    }
+	}
 	
 
 	
