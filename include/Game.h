@@ -2,7 +2,7 @@
 
 #include <SDL2\SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <stdio.h>
 #include <string>
 #include <cmath>
@@ -27,12 +27,13 @@ class Game
     private:
     SDL_Window* window;
     SDL_Renderer* gRenderer;
-    LTexture gUpTexture;
-    LTexture gDownTexture;
-    LTexture gLeftTexture;
-    LTexture gRightTexture;
-    LTexture gPressTexture;
-    LTexture* currentTexture;
+    LTexture gPromptTexture;
+    Mix_Music *gMusic = NULL;
+    //The sound effects that will be used
+    Mix_Chunk *gScratch = NULL;
+    Mix_Chunk *gHigh = NULL;
+    Mix_Chunk *gMedium = NULL;
+    Mix_Chunk *gLow = NULL;
     
     bool success;
     const int SCREEN_WIDTH = 640;
