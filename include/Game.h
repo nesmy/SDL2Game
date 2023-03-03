@@ -27,12 +27,12 @@ class Game
     private:
     SDL_Window* window;
     SDL_Renderer* gRenderer;
-    TTF_Font* gFont = NULL;
-    LButton gButtons[TOTAL_BUTTONS];
-    //Mouse button sprites
-    SDL_Rect gSpriteClips[ BUTTON_SPRITE_TOTAL ];
-    LTexture gButtonSpriteSheetTexture;
-    
+    LTexture gUpTexture;
+    LTexture gDownTexture;
+    LTexture gLeftTexture;
+    LTexture gRightTexture;
+    LTexture gPressTexture;
+    LTexture* currentTexture;
     
     bool success;
     const int SCREEN_WIDTH = 640;

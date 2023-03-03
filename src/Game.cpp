@@ -80,10 +80,32 @@ void Game::Event(SDL_Event e)
 		//Handle button events
         for( int i = 0; i < TOTAL_BUTTONS; ++i )
         {
-            gButtons[ i ].handleEvent( &e );
+           
 			
         }
        
+	}
+	//Set texture based on current keystate
+	const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
+	if( currentKeyStates[ SDL_SCANCODE_UP ] )
+	{
+		currentTexture = &gUpTexture;
+	}
+	else if( currentKeyStates[ SDL_SCANCODE_DOWN ] )
+	{
+		currentTexture = &gDownTexture;
+	}
+	else if( currentKeyStates[ SDL_SCANCODE_LEFT ] )
+	{
+		currentTexture = &gLeftTexture;
+	}
+	else if( currentKeyStates[ SDL_SCANCODE_RIGHT ] )
+	{
+		currentTexture = &gRightTexture;
+	}
+	else
+	{
+		currentTexture = &gPressTexture;
 	}
 }
 
@@ -102,12 +124,8 @@ void Game::Render()
    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
    SDL_RenderClear(gRenderer);
 
-	//Render buttons
-    for( int i = 0; i < TOTAL_BUTTONS; ++i )
-    {
-        gButtons[ i ].render(gButtonSpriteSheetTexture, gRenderer, &gSpriteClips[ BUTTON_SPRITE_TOTAL ]);
-		SDL_Log("render");
-    }
+	currentTexture->render(0,0,gRenderer);
+	
    //Update screen
    SDL_RenderPresent(gRenderer);
 }
@@ -115,7 +133,18 @@ void Game::Render()
 void Game::Quit()
 {
    //Free loaded image
-   gButtonSpriteSheetTexture.free();
+   
+   gUpTexture.free();
+   
+	gDownTexture.free();
+ 
+	gLeftTexture.free();
+ 
+	gRightTexture.free();
+
+	gPressTexture.free();
+
+	currentTexture->free();
 
    //Destroy window
    SDL_DestroyRenderer(gRenderer);
@@ -134,27 +163,30 @@ bool Game::loadMedia()
 	bool success = true;
 
 	//Load sprites
-	if( !gButtonSpriteSheetTexture.loadFromFile( "D:/Maker/SDL2Game/vendor/image/button.png", gRenderer ) )
+	if( !gUpTexture.loadFromFile( "D:/Maker/SDL2Game/vendor/image/up.png", gRenderer ) )
 	{
 		SDL_Log( "Failed to load button sprite texture!\n" );
 		success = false;
 	}
-	else
+	if( !gDownTexture.loadFromFile( "D:/Maker/SDL2Game/vendor/image/down.png", gRenderer ) )
 	{
-		//Set sprites
-		for( int i = 0; i < BUTTON_SPRITE_TOTAL; ++i )
-		{
-			gSpriteClips[ i ].x = 0;
-			gSpriteClips[ i ].y = i * 200;
-			gSpriteClips[ i ].w = BUTTON_WIDTH;
-			gSpriteClips[ i ].h = BUTTON_HEIGHT;
-		}
-
-		//Set buttons in corners
-		gButtons[ 0 ].setPosition( 0, 0 );
-		gButtons[ 1 ].setPosition( SCREEN_WIDTH - BUTTON_WIDTH, 0 );
-		gButtons[ 2 ].setPosition( 0, SCREEN_HEIGHT - BUTTON_HEIGHT );
-		gButtons[ 3 ].setPosition( SCREEN_WIDTH - BUTTON_WIDTH, SCREEN_HEIGHT - BUTTON_HEIGHT );
+		SDL_Log( "Failed to load button sprite texture!\n" );
+		success = false;
+	}
+	if( !gLeftTexture.loadFromFile( "D:/Maker/SDL2Game/vendor/image/left.png", gRenderer ) )
+	{
+		SDL_Log( "Failed to load button sprite texture!\n" );
+		success = false;
+	}
+	if( !gRightTexture.loadFromFile( "D:/Maker/SDL2Game/vendor/image/right.png", gRenderer ) )
+	{
+		SDL_Log( "Failed to load button sprite texture!\n" );
+		success = false;
+	}
+	if( !gPressTexture.loadFromFile( "D:/Maker/SDL2Game/vendor/image/press.png", gRenderer ) )
+	{
+		SDL_Log( "Failed to load button sprite texture!\n" );
+		success = false;
 	}
 
 	
