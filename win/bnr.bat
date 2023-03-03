@@ -1,3 +1,3 @@
-cd build
+cd ../build
 make
 OpenGL.exe
