@@ -22,6 +22,5 @@ target_link_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
                             ${OPENGL_LIBRARIES}
-                            opengl32
                             glfw
                             glad)
