@@ -1,1 +1,2 @@
-cmake -DGLFW_BUILD_DOCS=OFF -S . -B ..\build\ -G "Unix Makefiles"
+cd ..
+cmake -DGLFW_BUILD_DOCS=OFF -S . -B .\build\ -G "Unix Makefiles"
