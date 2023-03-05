@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
+SET(CMAKE_CXX_FLAGS "-lstdc++fs -std=c++17")
 
 project(OpenGL)
 
@@ -14,7 +15,8 @@ add_subdirectory(vendor/Glad)
 
 target_include_directories(${PROJECT_NAME}
                                 PUBLIC vendor/GLFW/include
-                                PUBLIC vendor/Glad/include)
+                                PUBLIC vendor/Glad/include
+                                PUBLIC vendor/glm)
 
 target_link_directories(${PROJECT_NAME}
                             PUBLIC vendor/GLFW/src
